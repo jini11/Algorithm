@@ -1,26 +1,27 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 
-public class  Main {
-    public static StringBuilder sb=new StringBuilder();
-    public static void main(String[] args) throws Exception{
-        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-        int n=Integer.parseInt(br.readLine());
+public class Main {
+	static int N;
+	static int totalCnt;
+	static StringBuilder sb = new StringBuilder();
 
-        sb.append((int)(Math.pow(2,n)-1)).append("\n");
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		N = sc.nextInt();
+		hanoi(0, 1, 2, 3);
+		System.out.println(totalCnt - 1);
+		System.out.println(sb);
+	}
 
-        hanoi(n,1,2,3);
-        System.out.println(sb);
-    }
-    public static void hanoi(int n,int a,int b,int c){
-        if(n==1){
-            sb.append(a+" "+c+"\n");
-            return;
-        }
-        hanoi(n-1,a,c,b);
+	private static void hanoi(int cnt, int from, int other, int to) {
+		if (cnt == N) {
+			totalCnt++;
+			return;
+		}
 
-        sb.append(a+" "+c+"\n");
+		hanoi(cnt + 1, from, to, other);
+		sb.append(from + " " + to + "\n");
+		hanoi(cnt + 1, other, from, to);
 
-        hanoi(n-1,b,a,c);
-    }
+	}
 }
