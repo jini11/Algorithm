@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -10,10 +11,10 @@ public class Main {
 	static int[] dc = { 0, 1, 0, -1 };
 
 	static boolean[] isSelected;
-	static int[][] command;
+	static int[][] command; 
 	static int[] commandIdx;
 
-	static int res;
+	static int res = Integer.MAX_VALUE;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -33,33 +34,32 @@ public class Main {
 		command = new int[K][4];
 		commandIdx = new int[K];
 		isSelected = new boolean[K];
-		res = Integer.MAX_VALUE;
 		for (int i = 0; i < K; i++) {
 			st = new StringTokenizer(br.readLine(), " ");
-			command[i][0] = i;
+			command[i][0] = i; 
 			command[i][1] = Integer.parseInt(st.nextToken());
 			command[i][2] = Integer.parseInt(st.nextToken());
 			command[i][3] = Integer.parseInt(st.nextToken());
 		}
 
-		permutation(0);
+		permutation(0); 
 
 		System.out.println(res);
 	}
 
-	private static void permutation(int cnt) { // K개의 명령어 중 순서대로 고르기
+	private static void permutation(int cnt) {
 		if (cnt == K) {
-			int[][] copy = cloneMap();
+			int[][] copyMap = cloneMap();
 			for (int i = 0; i < K; i++) {
 				int idx = commandIdx[i];
-				rotateMap(copy, command[idx][1] - command[idx][3], command[idx][2] - command[idx][3], command[idx][3]);
+				rotateMap(copyMap, command[idx][1] - command[idx][3], command[idx][2] - command[idx][3], command[idx][3]);
 			}
-			res = Math.min(res, getMin(copy, Integer.MAX_VALUE));
+			res = Math.min(res, getMin(copyMap));
 			return;
 		}
+
 		for (int i = 0; i < K; i++) {
-			if (isSelected[i])
-				continue;
+			if (isSelected[i]) continue;
 			commandIdx[cnt] = i;
 			isSelected[i] = true;
 			permutation(cnt + 1);
@@ -67,12 +67,10 @@ public class Main {
 		}
 	}
 
-	private static int[][] cloneMap() {
-		int[][] copy = new int[N+1][M+1];
+	private static int[][] cloneMap() {	
+		int[][] copy = new int[N + 1][M + 1];
 		for (int i = 1; i <= N; i++) {
-			for (int j = 1; j <= M; j++) {
-				copy[i][j] = map[i][j];
-			}
+			copy[i] = Arrays.copyOf(map[i], M + 1);
 		}
 		return copy;
 	}
@@ -82,7 +80,7 @@ public class Main {
 			return;
 		}
 
-		int firstNum = copyMap[row][col];
+		int firstNum = copyMap[row][col];			
 		int nextRow = row + 1, nextCol = col;
 		int curRow = row, curCol = col;
 		int cnt = 1;
@@ -101,17 +99,18 @@ public class Main {
 
 			cnt++;
 		}
-		copyMap[row][col + 1] = firstNum;
+		copyMap[row][col + 1] = firstNum;							
 		rotateMap(copyMap, row + 1, col + 1, size - 1);
 	}
 
-	private static int getMin(int[][] copyMap, int min) {
+	private static int getMin(int[][] copyMap) {
+		int min = Integer.MAX_VALUE;
 		for (int i = 1; i <= N; i++) {
 			int sum = 0;
 			for (int j = 1; j <= M; j++) {
 				sum += copyMap[i][j];
 			}
-			min = Math.min(min, sum);
+            min = Math.min(min, sum);
 		}
 		return min;
 	}
