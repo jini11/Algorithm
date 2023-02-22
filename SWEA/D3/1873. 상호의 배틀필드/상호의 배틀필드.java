@@ -1,105 +1,107 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
-class Solution
-{
+public class Solution {
 	static char[][] map;
 	static int[] train = new int[2];
-	static char trainDir;
-	static int[] dx = {1, -1};
+	static char trainHead;
+	static int[] dx = { 1, -1 };
 	static int h, w;
-	public static void main(String args[]) throws Exception
-	{
+	static List<Character> trainShape = Arrays.asList('^', 'v', '<', '>');
+
+	static int[] dr = { -1, 1, 0, 0 };
+	static int[] dc = { 0, 0, -1, 1 };
+
+	public static void main(String args[]) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder sb = new StringBuilder();
 		int T = Integer.parseInt(br.readLine());
-		
-		for(int test_case = 1; test_case <= T; test_case++)
-		{
+
+		for (int t = 1; t <= T; t++) {
 			String line = br.readLine();
 			h = Integer.parseInt(line.split(" ")[0]);
 			w = Integer.parseInt(line.split(" ")[1]);
 			map = new char[h][w];
-			for (int i=0; i<h; i++) {
+			for (int i = 0; i < h; i++) {
 				line = br.readLine();
-				for (int j=0; j<w; j++) {
+				for (int j = 0; j < w; j++) {
 					map[i][j] = line.charAt(j);
-					if (map[i][j] == '>' || map[i][j] == '<' || map[i][j] == '^' || map[i][j] == 'v') {
-						trainDir = map[i][j];
+					if (trainShape.contains(map[i][j])) {
+						trainHead = map[i][j];
 						train[0] = i;
 						train[1] = j;
 					}
 				}
 			}
 			int N = Integer.parseInt(br.readLine());
-			String[] way = br.readLine().split("");
-			
-			for (int i=0; i<way.length; i++) {
-				switch (way[i]) {
-				case "U":
-					move(-1, 0, '^');
+			String way = br.readLine();
+
+			for (int i = 0; i < way.length(); i++) {
+				switch (way.charAt(i)) {
+				case 'U':
+					move(0);
 					break;
-				case "D":
-					move(1, 0, 'v');
+				case 'D':
+					move(1);
 					break;
-				case "L":
-					move(0, -1, '<');
+				case 'L':
+					move(2);
 					break;
-				case "R":
-					move(0, 1, '>');
+				case 'R':
+					move(3);
 					break;
-				case "S":
-					if (trainDir == '^') {
-						shoot(-1, 0);
-					} else if (trainDir == 'v') {
-						shoot(1, 0);
-					} else if (trainDir == '<') {
-						shoot(0, -1);
-					} else if (trainDir == '>') {
-						shoot(0, 1);
-					}
+				case 'S':
+					int dir = trainShape.indexOf(trainHead);
+					shoot(dir);
 					break;
 				}
 			}
-			
-			System.out.print("#" + test_case + " ");
-			for (int i=0; i<h; i++) {
-				for (int j=0; j<w; j++) {
+
+			System.out.print("#" + t + " ");
+			for (int i = 0; i < h; i++) {
+				for (int j = 0; j < w; j++) {
 					System.out.print(map[i][j]);
 				}
 				System.out.println();
 			}
 		}
 	}
-	
-	public static void move(int dx, int dy, char dir) {
-		trainDir = dir;
-        int nx = train[0] + dx;
-        int ny = train[1] + dy;
-        if (nx < 0 || ny < 0 || nx >= h || ny >= w || map[nx][ny] == '*' || map[nx][ny] == '#' || map[nx][ny] == '-') {
-            map[train[0]][train[1]] = trainDir;
-            return;
-        }
-        map[train[0]][train[1]] = '.';
-        map[nx][ny] = trainDir;
-        train[0] = nx;
-        train[1] = ny;
+
+	private static void move(int dir) {
+		trainHead = trainShape.get(dir);
+		int nr = train[0] + dr[dir];
+		int nc = train[1] + dc[dir];
+
+		if (nr < 0 || nr >= h || nc < 0 || nc >= w || map[nr][nc] == '*' || map[nr][nc] == '#' || map[nr][nc] == '-') {
+			map[train[0]][train[1]] = trainHead;
+			return;
+		}
+		map[train[0]][train[1]] = '.';
+		map[nr][nc] = trainHead;
+		train[0] = nr;
+		train[1] = nc;
 	}
-	
-	public static void shoot(int dx, int dy) {
-		int x = train[0];
-		int y = train[1];
-		
+
+	private static void shoot(int dir) {
+		int row = train[0];
+		int col = train[1];
+
 		while (true) {
-			int nx = x + dx;
-			int ny = y + dy;
-			if (nx < 0 || ny < 0 || nx >= h || ny >= w || map[nx][ny] == '#') break;
-			if (map[nx][ny] == '*') {
-				map[nx][ny] = '.';
+			int nr = row + dr[dir];
+			int nc = col + dc[dir];
+
+			if (nr < 0 || nr >= h || nc < 0 || nc >= w || map[nr][nc] == '#')
+				break;
+			if (map[nr][nc] == '*') {
+				map[nr][nc] = '.';
 				break;
 			}
-			x = nx;
-			y = ny;
+
+			row = nr;
+			col = nc;
 		}
 	}
-	
+
 }
