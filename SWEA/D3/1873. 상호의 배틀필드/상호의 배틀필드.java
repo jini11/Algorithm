@@ -7,8 +7,8 @@ public class Solution {
 	static char[][] map;
 	static int[] train = new int[2];
 	static char trainHead;
-	static int[] dx = { 1, -1 };
-	static int h, w;
+	static int H, W;
+	
 	static List<Character> trainShape = Arrays.asList('^', 'v', '<', '>');
 
 	static int[] dr = { -1, 1, 0, 0 };
@@ -21,12 +21,12 @@ public class Solution {
 
 		for (int t = 1; t <= T; t++) {
 			String line = br.readLine();
-			h = Integer.parseInt(line.split(" ")[0]);
-			w = Integer.parseInt(line.split(" ")[1]);
-			map = new char[h][w];
-			for (int i = 0; i < h; i++) {
+			H = Integer.parseInt(line.split(" ")[0]);
+			W = Integer.parseInt(line.split(" ")[1]);
+			map = new char[H][W];
+			for (int i = 0; i < H; i++) {
 				line = br.readLine();
-				for (int j = 0; j < w; j++) {
+				for (int j = 0; j < W; j++) {
 					map[i][j] = line.charAt(j);
 					if (trainShape.contains(map[i][j])) {
 						trainHead = map[i][j];
@@ -59,14 +59,15 @@ public class Solution {
 				}
 			}
 
-			System.out.print("#" + t + " ");
-			for (int i = 0; i < h; i++) {
-				for (int j = 0; j < w; j++) {
-					System.out.print(map[i][j]);
+			sb.append("#").append(t).append(" ");
+			for (int i = 0; i < H; i++) {
+				for (int j = 0; j < W; j++) {
+					sb.append(map[i][j]);
 				}
-				System.out.println();
+				sb.append("\n");
 			}
 		}
+		System.out.println(sb);
 	}
 
 	private static void move(int dir) {
@@ -74,7 +75,7 @@ public class Solution {
 		int nr = train[0] + dr[dir];
 		int nc = train[1] + dc[dir];
 
-		if (nr < 0 || nr >= h || nc < 0 || nc >= w || map[nr][nc] == '*' || map[nr][nc] == '#' || map[nr][nc] == '-') {
+		if (nr < 0 || nr >= H || nc < 0 || nc >= W || map[nr][nc] == '*' || map[nr][nc] == '#' || map[nr][nc] == '-') {
 			map[train[0]][train[1]] = trainHead;
 			return;
 		}
@@ -92,7 +93,7 @@ public class Solution {
 			int nr = row + dr[dir];
 			int nc = col + dc[dir];
 
-			if (nr < 0 || nr >= h || nc < 0 || nc >= w || map[nr][nc] == '#')
+			if (nr < 0 || nr >= H || nc < 0 || nc >= W || map[nr][nc] == '#')
 				break;
 			if (map[nr][nc] == '*') {
 				map[nr][nc] = '.';
