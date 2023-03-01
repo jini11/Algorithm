@@ -66,15 +66,15 @@ public class Main {
 		return parents[v] = findSet(parents[v]);
 	}
 
-    static void union(int a, int b) {
+	static boolean union(int a, int b) {
 		int aRoot = findSet(a);
 		int bRoot = findSet(b);
 
-		if (aRoot < bRoot) {
-			parents[bRoot] = aRoot;
-		} else {
-			parents[aRoot] = bRoot;
+		if (aRoot == bRoot) {
+			return false;
 		}
+		parents[bRoot] = aRoot;
+		return true;
 	}
 
 	private static void subset(int cnt) {
