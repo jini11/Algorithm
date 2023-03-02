@@ -5,13 +5,13 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Solution{
+public class Solution {
 	static int N, W, H;
 	static int[][] map;
 	static int[][] copy;
 	static int res;
 	static int[] ball;
-	static boolean isContinue;
+//	static boolean isContinue;
 	
 	static int[] dr = { -1, 0, 1, 0 };
 	static int[] dc = { 0, 1, 0, -1 };
@@ -39,7 +39,7 @@ public class Solution{
 			}
 
 			ball = new int[N];
-			isContinue = true;
+//			isContinue = true;
 			permutation(0);
 
 			sb.append("#").append(t).append(" ").append(res).append("\n");
@@ -61,11 +61,11 @@ public class Solution{
 				}
 			}
 			res = Math.min(res, countBrick());
-			if (res == 0) isContinue = false;
+//			if (res == 0) isContinue = false;
 			return;
 		}
 
-		if (!isContinue) return;
+//		if (!isContinue) return;
 		
 		for (int i = 0; i < W; i++) {
 			ball[cnt] = i;
