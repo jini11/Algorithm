@@ -32,22 +32,20 @@ public class Main {
 		}
 
 		max = cnt;
-		for (int i = 1; i < N; i++) {
-			if (max <= cnt) {
-				if (eat[c] == 0) {
-					max = cnt + 1;
-				} else {
-					max = cnt;
-				}
+		for (int i = 0; i < N; i++) {
+			if (eat[c] == 0) {
+				max = Math.max(max, cnt + 1);
+			} else {
+				max = Math.max(max, cnt);
 			}
-			eat[sushi[i - 1]]--;
-			if (eat[sushi[i - 1]] == 0) {
+			eat[sushi[i]]--;
+			if (eat[sushi[i]] == 0) {
 				cnt--;
 			}
-			if (eat[sushi[(i + k - 1) % N]] == 0) {
+			if (eat[sushi[(i + k) % N]] == 0) {
 				cnt++;
 			}
-			eat[sushi[(i + k - 1) % N]]++;
+			eat[sushi[(i + k) % N]]++;
 		}
 
 		System.out.println(max);
