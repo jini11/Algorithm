@@ -29,7 +29,7 @@ public class Main {
 			long c = Long.parseLong(st.nextToken());
 			if (a == 1) { // update
 				long dist = c - input[(int) (b - 1)];
-				update2(b, dist);
+				update(b, dist);
 				input[(int) (b - 1)] = c;
 			} else { // sum
 				sb.append(sum(b, c)).append("\n");
@@ -41,13 +41,6 @@ public class Main {
 	public static void update(long i, long num) {
 		while (i <= N) {
 			tree[(int) i] += num;
-			i += (i & -i);
-		}
-	}
-
-	public static void update2(long i, long dist) {
-		while (i <= N) {
-			tree[(int) i] += dist;
 			i += (i & -i);
 		}
 	}
