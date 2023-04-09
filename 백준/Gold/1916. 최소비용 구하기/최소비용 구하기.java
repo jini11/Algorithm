@@ -2,85 +2,70 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
-class Node implements Comparable<Node> {
-
-    private int index;
-    private int distance;
-
-    public Node(int index, int distance) {
-        this.index = index;
-        this.distance = distance;
-    }
-
-    public int getIndex() {
-        return this.index;
-    }
-
-    public int getDistance() {
-        return this.distance;
-    }
-
-    @Override
-    public int compareTo(Node o) {
-        if(this.distance < o.distance)
-            return -1; // 오름차순?
-        return 1;
-    }
-
-}
-
 public class Main {
-    static final int INF = (int) 1e9;
-    static int n, m, startNode, endNode;
-    static ArrayList<ArrayList<Node>> graph = new ArrayList<>();
-    static int[] d = new int[1001]; // 최단 거리 테이블
-    public static void main(String[] args) throws IOException{
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        n = Integer.parseInt(br.readLine());
-        m = Integer.parseInt(br.readLine());
+	static class Edge implements Comparable<Edge> {
+		int v, weight;
 
-        for(int i=0;i<=n;i++) // 그래프 초기화
-            graph.add(new ArrayList<Node>());
+		public Edge(int v, int weight) {
+			this.v = v;
+			this.weight = weight;
+		}
 
-        for(int i=0;i<m;i++) { // 간선 정보 입력
-            st = new StringTokenizer(br.readLine());
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-            int z = Integer.parseInt(st.nextToken());
-            graph.get(x).add(new Node(y, z)); // x번 노드에서 y번 노드로 가는 비용이 z이다
-        }
-        st = new StringTokenizer(br.readLine());
-        startNode = Integer.parseInt(st.nextToken());
-        endNode = Integer.parseInt(st.nextToken());
+		@Override
+		public int compareTo(Edge o) {
+			return Integer.compare(this.weight, o.weight);
+		}
+	}
 
-        Arrays.fill(d, INF); // 최단 거리 테이블 초기화
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
+		int V = Integer.parseInt(br.readLine());
+		int E = Integer.parseInt(br.readLine());
+		List<Edge>[] adj = new ArrayList[V];
+		for (int i = 0; i < V; i++) {
+			adj[i] = new ArrayList<>();
+		}
 
-        dijkstra(startNode);
+		for (int i = 0; i < E; i++) {
+			st = new StringTokenizer(br.readLine());
+			int from = Integer.parseInt(st.nextToken()) - 1;
+			int to = Integer.parseInt(st.nextToken()) - 1;
+			int weight = Integer.parseInt(st.nextToken());
+			adj[from].add(new Edge(to, weight));
+		}
 
-        System.out.println(d[endNode]);
-    }
+		st = new StringTokenizer(br.readLine());
+		int start = Integer.parseInt(st.nextToken()) - 1;
+		int end = Integer.parseInt(st.nextToken()) - 1;
+		PriorityQueue<Edge> pq = new PriorityQueue<>();
+		boolean[] check = new boolean[V];
+		Edge[] d = new Edge[V];
 
-    public static void dijkstra(int start) {
-        PriorityQueue<Node> pq = new PriorityQueue<>();
-        pq.offer(new Node(start, 0));
-        d[start] = 0;
-        while(!pq.isEmpty()) {
-            Node node = pq.poll();
-            int curNode = node.getIndex();
-            int curDistance = node.getDistance();
-            if(d[curNode] < curDistance) continue;
-            for(int i=0;i<graph.get(curNode).size();i++) {
-                int cost = d[curNode] + graph.get(curNode).get(i).getDistance();
-                if(cost < d[graph.get(curNode).get(i).getIndex()]) {
-                    d[graph.get(curNode).get(i).getIndex()] = cost;
-                    pq.offer(new Node(graph.get(curNode).get(i).getIndex(), cost));
-                }
-            }
-        }
-    }
+		for (int i = 0; i < V; i++) {
+			if (i == start) {
+				d[i] = new Edge(i, 0);
+			} else {
+				d[i] = new Edge(i, Integer.MAX_VALUE);
+			}
+		}
+		pq.add(d[start]);
+
+		while (!pq.isEmpty()) {
+			Edge cur = pq.poll();
+			for (Edge next : adj[cur.v]) {
+				if (!check[next.v] && d[next.v].weight > d[cur.v].weight + next.weight) {
+					d[next.v].weight = d[cur.v].weight + next.weight;
+					pq.remove(d[next.v]);
+					pq.add(d[next.v]);
+				}
+			}
+			check[cur.v] = true;
+		}
+		System.out.println(d[end].weight);
+	}
 }
