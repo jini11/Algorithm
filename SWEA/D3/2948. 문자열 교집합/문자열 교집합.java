@@ -1,29 +1,42 @@
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
-class Solution
-{
-	public static void main(String args[]) throws Exception
-	{
-		Scanner sc = new Scanner(System.in);
-		int T = sc.nextInt();
+public class Solution {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int T = Integer.parseInt(br.readLine());
+		StringBuilder sb = new StringBuilder();
 		
-		for(int test_case = 1; test_case <= T; test_case++)
-		{
-			int N = sc.nextInt();
-			int M = sc.nextInt();
-			Set<String> set = new HashSet<>();
+		for (int tc = 1; tc <= T; tc++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			int N = Integer.parseInt(st.nextToken());
+			int M = Integer.parseInt(st.nextToken());
+			
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			st = new StringTokenizer(br.readLine());
 			for (int i = 0; i < N; i++) {
-				String word = sc.next();
-				set.add(word);
-			}
-			int cnt = 0;
-			for (int i = 0; i < M; i++) {
-				String word = sc.next();
-				if (set.contains(word)) cnt++;
+				String s = st.nextToken();
+				map.put(s, map.getOrDefault(s, 0) + 1);
 			}
 			
-			System.out.println("#" + test_case + " " + cnt);
+			st = new StringTokenizer(br.readLine());
+			for (int i = 0; i < M; i++) {
+				String s = st.nextToken();
+				map.put(s, map.getOrDefault(s, 0) + 1);
+			}
+			
+			int ans = 0;
+			for (Map.Entry<String, Integer> entry: map.entrySet()) {
+				if (entry.getValue() > 1) {
+					ans++;
+				}
+			}
+			sb.append("#" + tc + " " + ans + "\n");
 		}
+		System.out.println(sb.toString());
 	}
-
 }
