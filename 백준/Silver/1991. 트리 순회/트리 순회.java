@@ -5,32 +5,72 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-	public static Node root = new Node('A', null, null);	// 루트 노드
-	public static StringBuilder sb = new StringBuilder();
+	static final Node root = new Node('A', null, null);
+	static StringBuilder sb;
+	
+	static class Node {
+		char head;
+		Node left;
+		Node right;
+
+		public Node(char head, Node left, Node right) {
+			this.head = head;
+			this.left = left;
+			this.right = right;
+		}
+	}
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
+		sb = new StringBuilder();
 		int N = Integer.parseInt(br.readLine());
-
+		
 		for (int i = 0; i < N; i++) {
-			st = new StringTokenizer(br.readLine(), " ");
-
-			insert(root, st.nextToken().charAt(0), st.nextToken().charAt(0), st.nextToken().charAt(0));
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			char head = st.nextToken().charAt(0);
+			char left = st.nextToken().charAt(0);
+			char right = st.nextToken().charAt(0);
+			
+			insert(root, head, left, right);
 		}
-
-		preOrder(root);
+		
+		pre(root);
 		sb.append("\n");
-		inOrder(root);
+		in(root);
 		sb.append("\n");
-		postOrder(root);
-
-		System.out.println(sb);
+		post(root);
+		sb.append("\n");
+		
+		System.out.println(sb.toString());
 	}
-
-	public static void insert(Node node, char root, char left, char right) {
-		if (node.value == root) {
-			if (left == '.') {		
+	
+	private static void pre(Node node) {
+		if (node == null) return;
+		
+		sb.append(node.head);
+		pre(node.left);
+		pre(node.right);
+	}
+	
+	private static void in(Node node) {
+		if (node == null) return;
+		
+		in(node.left);
+		sb.append(node.head);
+		in(node.right);
+	}
+	
+	private static void post(Node node) {
+		if (node == null) return;
+		
+		post(node.left);
+		post(node.right);
+		sb.append(node.head);
+	}
+	
+	private static void insert(Node node, char head, char left, char right) {
+		if (node.head == head) {
+			if (left == '.') {
 				node.left = null;
 			} else {
 				node.left = new Node(left, null, null);
@@ -42,50 +82,11 @@ public class Main {
 			}
 		} else {
 			if (node.left != null) {
-				insert(node.left, root, left, right);
+				insert(node.left, head, left, right);
 			}
 			if (node.right != null) {
-				insert(node.right, root, left, right);
+				insert(node.right, head, left, right);				
 			}
-		}
-	}
-
-	public static void preOrder(Node node) {	// 전위순회
-		if (node == null) {
-			return;
-		}
-		sb.append(node.value);
-		preOrder(node.left);
-		preOrder(node.right);
-	}
-
-	public static void inOrder(Node node) {		// 즁위순회
-		if (node == null) {
-			return;
-		}
-		inOrder(node.left);
-		sb.append(node.value);
-		inOrder(node.right);
-	}
-
-	public static void postOrder(Node node) {	// 후위순회
-		if (node == null) {
-			return;
-		}
-		postOrder(node.left);
-		postOrder(node.right);
-		sb.append(node.value);
-	}
-
-	static class Node {
-		private char value;
-		private Node left;
-		private Node right;
-
-		Node(char value, Node left, Node right) {
-			this.value = value;
-			this.left = left;
-			this.right = right;
 		}
 	}
 }
