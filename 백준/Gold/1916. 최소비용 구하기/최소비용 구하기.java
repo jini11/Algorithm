@@ -1,71 +1,68 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
-	static class Edge implements Comparable<Edge> {
-		int v, weight;
-
-		public Edge(int v, int weight) {
-			this.v = v;
-			this.weight = weight;
-		}
-
-		@Override
-		public int compareTo(Edge o) {
-			return Integer.compare(this.weight, o.weight);
-		}
-	}
+	private static final int INF = (int) 1e9;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
-		int V = Integer.parseInt(br.readLine());
-		int E = Integer.parseInt(br.readLine());
-		List<Edge>[] adj = new ArrayList[V];
-		for (int i = 0; i < V; i++) {
-			adj[i] = new ArrayList<>();
+		int N = Integer.parseInt(br.readLine());
+		int M = Integer.parseInt(br.readLine());
+
+		int[][] adjMatrix = new int[N+1][N+1];
+		int[] distance = new int[N+1];
+		boolean[] visited = new boolean[N+1];
+
+		Arrays.fill(distance, INF);
+		for (int i = 1; i <= N; i++) {
+			Arrays.fill(adjMatrix[i], INF);
 		}
 
-		for (int i = 0; i < E; i++) {
+		for (int i = 0; i < M; i++) {
 			st = new StringTokenizer(br.readLine());
-			int from = Integer.parseInt(st.nextToken()) - 1;
-			int to = Integer.parseInt(st.nextToken()) - 1;
+			int from = Integer.parseInt(st.nextToken());
+			int to = Integer.parseInt(st.nextToken());
 			int weight = Integer.parseInt(st.nextToken());
-			adj[from].add(new Edge(to, weight));
+
+			adjMatrix[from][to] = Math.min(adjMatrix[from][to], weight);
 		}
 
 		st = new StringTokenizer(br.readLine());
-		int start = Integer.parseInt(st.nextToken()) - 1;
-		int end = Integer.parseInt(st.nextToken()) - 1;
-		PriorityQueue<Edge> pq = new PriorityQueue<>();
-		boolean[] check = new boolean[V];
-		Edge[] d = new Edge[V];
+		int start = Integer.parseInt(st.nextToken());
+		int end = Integer.parseInt(st.nextToken());
 
-		for (int i = 0; i < V; i++) {
-			if (i == start) {
-				d[i] = new Edge(i, 0);
-			} else {
-				d[i] = new Edge(i, Integer.MAX_VALUE);
-			}
-		}
-		pq.add(d[start]);
+		distance[start] = 0;
 
-		while (!pq.isEmpty()) {
-			Edge cur = pq.poll();
-			for (Edge next : adj[cur.v]) {
-				if (!check[next.v] && d[next.v].weight > d[cur.v].weight + next.weight) {
-					d[next.v].weight = d[cur.v].weight + next.weight;
-					pq.remove(d[next.v]);
-					pq.add(d[next.v]);
+		for (int i = 1; i <= N; i++) {
+			int current = -1;
+			int min = INF;
+
+			for (int j = 1; j <= N; j++) {
+				if (!visited[j] && min > distance[j]) {
+					min = distance[j];
+					current = j;
 				}
 			}
-			check[cur.v] = true;
+
+			if (current == -1) break;
+			visited[current] = true;
+			if (current == end) break;
+
+			for (int j = 1; j <= N; j++) {
+				if (!visited[j] && adjMatrix[current][j] != INF && distance[j] > min + adjMatrix[current][j]) {
+					distance[j] = min + adjMatrix[current][j];
+				}
+			}
 		}
-		System.out.println(d[end].weight);
+
+		if (distance[end] != INF) {
+			System.out.println(distance[end]);
+		} else {
+			System.out.println(-1);
+		}
 	}
 }
