@@ -2,68 +2,69 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int n, m, result;
+
+    static int N, M, res;
     static int[][] map;
-    static boolean[] visited;
-    static ArrayList<Home> home, chicken;
-    public static void main(String []args) throws IOException {
+    static List<int[]> chickens;
+    static List<int[]> homes;
+    static int[] selectedChicken;
+
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
-        map = new int[n+1][n+1];
-        home = new ArrayList<>();
-        chicken = new ArrayList<>();
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
 
-        for(int i=1;i<=n;i++) {
+        map = new int[N][N];
+        chickens = new ArrayList<>();
+        homes = new ArrayList<>();
+        selectedChicken = new int[M];
+
+        for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
-            for(int j=1;j<=n;j++) {
+            for (int j = 0; j < N; j++) {
                 map[i][j] = Integer.parseInt(st.nextToken());
-                if(map[i][j] == 1)
-                    home.add(new Home(i, j));
-                if(map[i][j] == 2)
-                    chicken.add(new Home(i, j));
+                if (map[i][j] == 2) {
+                    chickens.add(new int[] {i, j});
+                } else if (map[i][j] == 1) {
+                    homes.add(new int[] {i, j});
+                }
             }
         }
-        result = Integer.MAX_VALUE;
-        visited = new boolean[chicken.size()];
-        dfs(0, 0);
-        System.out.println(result);
+
+        res = Integer.MAX_VALUE;
+        combi(0, 0);
+
+        System.out.println(res);
     }
-    public static void dfs(int start, int count) {
-        if(count == m) {
-            // 최단거리 구하기
-            int sum = 0;
-            for(int i=0;i<home.size();i++) {
-                int temp = Integer.MAX_VALUE;
-                for(int j=0;j<chicken.size();j++) {
-                    if(visited[j]) {
-                        int d = Math.abs(home.get(i).x - chicken.get(j).x)
-                            + Math.abs(home.get(i).y - chicken.get(j).y);
-                        temp = Math.min(temp, d);
-                    }
-                }
-                sum += temp;
-            }
-            result = Math.min(result, sum);
+    private static void combi(int cnt, int start) {
+        if (cnt == M) {
+            res = Math.min(res, getDistance());
             return;
         }
-        // 백트래킹으로 치킨집 선정
-        for(int i=start;i<chicken.size();i++) {
-            visited[i] = true;
-            dfs(i+1, count+1);
-            visited[i] = false;
+
+        for (int i = start; i < chickens.size(); i++) {
+            selectedChicken[cnt] = i;
+            combi(cnt + 1, i + 1);
         }
     }
-}
-class Home {
-    int x;
-    int y;
-    Home(int x, int y) {
-        this.x = x;
-        this.y = y;
+
+    private static int getDistance() {
+        int sum = 0;
+
+        for (int i = 0; i < homes.size(); i++) {
+            int distance = Integer.MAX_VALUE;
+            for (int j = 0; j < selectedChicken.length; j++) {
+                int temp = Math.abs(homes.get(i)[0] - chickens.get(selectedChicken[j])[0])
+                        + Math.abs(homes.get(i)[1] - chickens.get(selectedChicken[j])[1]);
+                distance = Math.min(distance, temp);
+            }
+            sum += distance;
+        }
+        return sum;
     }
 }
