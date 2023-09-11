@@ -1,12 +1,11 @@
 import java.util.*;
 class Solution {
-    static Queue<String> queue1, queue2;
     public String solution(String[] cards1, String[] cards2, String[] goal) {
         String answer = "Yes";       
         
         Map<String, Integer> map = new HashMap<>();
-        queue1 = new ArrayDeque<>();
-        queue2 = new ArrayDeque<>();
+        Queue<String> queue1 = new ArrayDeque<>();
+        Queue<String> queue2 = new ArrayDeque<>();
         
         for (int i = 0; i < cards1.length; i++) {
             queue1.add(cards1[i]);
@@ -22,14 +21,16 @@ class Solution {
             if (!map.containsKey(word)) {
                 return "No";
             }
-            boolean flag = true;
             if (map.get(word) == 1) {
-                flag = outWord(queue1, word);
+                if (!outWord(queue1, word)) {
+                    return "No";
+                }
             } else {
-                flag = outWord(queue2, word);
+                if (!outWord(queue2, word)) {
+                    return "No";
+                }
             }
             map.remove(word);
-            if (!flag) return "No";
         }
         
         return answer;
