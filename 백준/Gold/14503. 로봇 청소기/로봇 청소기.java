@@ -34,11 +34,14 @@ public class Main {
 		
 		dfs(r, c, d);
 		
-		System.out.println(cnt + 1);
+		System.out.println(cnt);
 	}
 	
 	private static void dfs(int row, int col, int dir) {
-		map[row][col] = 2;
+		if (map[row][col] == 0) {
+			cnt++;
+			map[row][col] = 2;
+		}
 		
 		// 청소할 칸이 있는 경우
 		for (int i = 0; i < 4; i++) {
@@ -50,7 +53,6 @@ public class Main {
 			
 			if (nr < 0 || nr >= N || nc < 0 || nc >= M || map[nr][nc] == 1) continue;
 			if (map[nr][nc] == 0) {
-				cnt++;
 				dfs(nr, nc, dir);
 				return;
 			}
