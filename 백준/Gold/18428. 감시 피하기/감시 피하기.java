@@ -2,70 +2,82 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
-    static char[][] map;
-    static int n;
-    static boolean key = true;
-    static ArrayList<int[]> list;
-    static int[] dx = {1, -1, 0, 0};
-    static int[] dy = {0, 0, 1, -1};
-    public static void main(String []args) throws IOException { 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        n = Integer.parseInt(br.readLine());
-        map = new char[n][n];
-        list = new ArrayList<>();
-
-        for(int i=0;i<n;i++) {
-            st = new StringTokenizer(br.readLine());
-            for(int j=0;j<n;j++) {
-                map[i][j] = st.nextToken().charAt(0);
-                if(map[i][j] == 'T') {
-                    list.add(new int[] {i, j});
-                }
-            }
-        }
-        make_wall(0, 0, 0);
-        
-        System.out.println("NO");
-    }
-    public static void make_wall(int x, int y, int wall) {
-        if(wall == 3) {
-            if(check()) {
-                System.out.println("YES");
-                System.exit(0);
-            }
-            return;
-        }
-        for(int i=x;i<n;i++) {
-            for(int j=y;j<n;j++) {
-                if(map[i][j] == 'X') {
-                    map[i][j] = 'O';
-                    make_wall(i, j+1, wall+1);
-                    map[i][j] = 'X';
-                }
-            }
-            y=0;
-        }
-    }
-    public static boolean check() {
-        for(int i=0;i<list.size();i++) {
-            int[] point = list.get(i);
-            for(int j=0;j<4;j++) {
-                int nx = point[0];
-                int ny = point[1];
-                while(true) {
-                    nx += dx[j];
-                    ny += dy[j];
-                    if(nx<0 || ny<0 || nx>=n || ny>=n) break;
-                    if(map[nx][ny] == 'O') break;
-                    if(map[nx][ny] == 'S') 
-                        return false;
-                }
-            }
-        }
-        return true;
-    }
+	static int N;
+	static char[][] map;
+	static List<int[]> teacher;
+	
+	static int[] dr = {1, 0, -1, 0};
+	static int[] dc = {0, 1, 0, -1};
+	
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
+		N = Integer.parseInt(br.readLine());
+		map = new char[N][N];
+		teacher = new ArrayList<int[]>();
+		
+		for (int i = 0; i < N; i++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			for (int j = 0; j < N; j++) {
+				map[i][j] = st.nextToken().charAt(0);
+				if (map[i][j] == 'T') {
+					teacher.add(new int[] {i, j});
+				}
+			}
+		}
+		
+		if (makeWall(0, 0, 0)) {
+			System.out.println("YES");
+		} else {
+			System.out.println("NO");
+		}
+	}
+	
+	private static boolean makeWall(int cnt, int row, int col) {
+		if (cnt == 3) {
+			if (see()) {
+				return true;
+			}
+			return false;
+		}
+		
+		for (int i = row; i < N; i++) {
+			for (int j = col; j < N; j++) {
+				if (map[i][j] == 'X') {
+					map[i][j] = 'O';
+					if (makeWall(cnt + 1, i, j+1)) {
+						return true;
+					}
+					map[i][j] = 'X';
+				}
+			}
+			col = 0;
+		}
+		return false;
+	}
+	
+	private static boolean see() {
+		for (int i = 0; i < teacher.size(); i++) {
+			int[] cur = teacher.get(i);
+			for (int j = 0; j < 4; j++) {
+				int nr = cur[0];
+				int nc = cur[1];
+				while (true) {
+					nr += dr[j];
+					nc += dc[j];
+					
+					if (nr < 0 || nr >= N || nc < 0 || nc >= N) break;
+					if (map[nr][nc] == 'O') break;
+					if (map[nr][nc] == 'S') {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 }
