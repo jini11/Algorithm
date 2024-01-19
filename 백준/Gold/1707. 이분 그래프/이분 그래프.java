@@ -41,8 +41,9 @@ public class Main {
 			
 			for (int i = 1; i < V + 1; i++) {
 				if (!flag) break;
-				if (!visited[i]) {
-					bfs(i);
+				if (color[i] == 0) {
+//					bfs(i);
+					dfs(i, 1);
 				}
 			}
 			
@@ -77,5 +78,23 @@ public class Main {
 				visited[cur] = true;
 			}
 		}
+	}
+	
+	private static void dfs(int node, int col) {
+		if (!flag) {
+			return;
+		}
+		
+		color[node] = col;
+		
+		for (Integer next : list[node]) {
+			if (color[next] == 0) {
+				dfs(next, -col);
+			} else if (color[next] == col) {
+				flag = false;
+				return;
+			}
+		}
+		
 	}
 }
