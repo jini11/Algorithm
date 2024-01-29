@@ -79,29 +79,17 @@ public class Main {
 	}
 	
 	private static void wave() {
-		boolean[][] visited = new boolean[N][M];
 		for (int[] empty : emptyList) {
 			for (int i = 0; i < 4; i++) {
 				int nr = empty[0] + dr[i];
 				int nc = empty[1] + dc[i];
 				
 				if (nr < 0 || nc < 0 || nr >= N || nc >= M) continue;
-				if (!visited[nr][nc] && map[nr][nc] == 1) {
+				if (map[nr][nc] == 1) {
 					map[nr][nc] = 0;
 					continue;
 				}
-				visited[nr][nc] = true;
 			}
 		}
-	}
-	
-	private static void printMap() {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				System.out.print(map[i][j] + " ");
-			}
-			System.out.println();
-		}
-		System.out.println();
 	}
 }
