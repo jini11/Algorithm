@@ -1,47 +1,51 @@
-import java.util.*;
-import java.io.*;
-public class Main{
-    public static int NUMBER_OF_CARD;
-    public static int NUMBER_OF_SELECT;
-    public static String card[];
-    public static boolean visited[];
-    public static HashSet<String> hs = new HashSet<String>();
-    public static void main(String [] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringBuilder sb = new StringBuilder();
-      
-        NUMBER_OF_CARD  = Integer.parseInt(br.readLine());
-        NUMBER_OF_SELECT = Integer.parseInt(br.readLine());
-        card = new String [NUMBER_OF_CARD];
-        for(int i=0;i<NUMBER_OF_CARD;i++) {
-            card[i] = br.readLine();
-        }
-        visited = new boolean [NUMBER_OF_CARD];
-        selectCard(NUMBER_OF_SELECT, "");
-        
-        sb.append(hs.size());
-        sb.append("\n"); 
-        
-        bw.write(sb.toString());
-        
-        bw.flush();
-        br.close();
-        bw.close();
-        
-    }
-    public static void selectCard(int remain, String k) {
-        if(remain == 0) {
-            hs.add(k);
-            return;
-        }
-        for(int i=0;i<NUMBER_OF_CARD;i++) {
-            if(!visited[i]) {
-                visited[i] = true;
-                selectCard(remain-1, k + card[i]);
-                visited[i] = false;
-            }
-        }
-        
-    }
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
+
+public class Main {
+	
+	static int N, K;
+	static int[] arr, numbers;
+	static boolean[] isSelected;
+	static Set<String> set;
+	
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		K = Integer.parseInt(br.readLine());
+		
+		arr = new int[N];
+		numbers = new int[K];
+		isSelected = new boolean[N];
+		set = new HashSet<String>();
+		
+		for (int i = 0; i < N; i++) {
+			arr[i] = Integer.parseInt(br.readLine());
+		}
+		
+		perm(0);
+		
+		System.out.println(set.size());
+	}
+	
+	private static void perm(int cnt) {
+		if (cnt == K) {
+			StringBuilder sb = new StringBuilder();
+			for (int number : numbers) {
+				sb.append(number);
+			}
+			set.add(sb.toString());
+			return;
+		}
+		
+		for (int i = 0; i < N; i++) {
+			if (isSelected[i]) continue;
+			numbers[cnt] = arr[i];
+			isSelected[i] = true;
+			perm(cnt + 1);
+			isSelected[i] = false;
+		}
+	}
 }
