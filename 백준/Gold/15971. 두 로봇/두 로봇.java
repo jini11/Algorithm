@@ -72,7 +72,7 @@ public class Main {
 				if (dist[next.v] > distance) {
 					dist[next.v] = distance;
 					road[next.v] = Math.max(cur.max, next.weight);
-					pq.add(new Node(next.v, dist[next.v], Math.max(next.max, next.weight)));
+					pq.add(new Node(next.v, dist[next.v], Math.max(cur.max, next.weight)));
 				}
 			}
 		}
