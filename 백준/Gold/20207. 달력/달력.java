@@ -33,13 +33,12 @@ public class Main {
         }
 
         int ans = 0;
-        int start = pq.peek().s;
-        int end = pq.poll().e;
-        int cnt = 1;
         List<Integer> endLayer = new ArrayList<>();
-        endLayer.add(end);
+        Date cur = pq.poll();
+        int cnt = 1;
+        endLayer.add(cur.e);
         while (!pq.isEmpty()) {
-            if (end + 1 >= pq.peek().s) {
+            if (cur.e + 1 >= pq.peek().s) {
                 boolean canAttach = false;
                 Collections.sort(endLayer);
                 for (int i = 0; i < endLayer.size(); i++) {
@@ -51,20 +50,20 @@ public class Main {
                     }
                 }
                 if (!canAttach) {
-                    cnt = endLayer.size() + 1;
                     endLayer.add(pq.poll().e);
+                    cnt = endLayer.size();
                 }
-                end = Math.max(end, endLayer.get(endLayer.size() - 1));
+                cur.e = Math.max(cur.e, endLayer.get(endLayer.size() - 1));
             } else {
-                ans += (end - start + 1) * cnt;
+                ans += (cur.e - cur.s + 1) * cnt;
                 cnt = 1;
                 endLayer = new ArrayList<>();
                 endLayer.add(pq.peek().e);
-                start = pq.peek().s;
-                end = pq.poll().e;
+                cur.s = pq.peek().s;
+                cur.e = pq.poll().e;
             }
         }
-        ans += (end - start + 1) * cnt;
+        ans += (cur.e - cur.s + 1) * cnt;
         System.out.println(ans);
     }
 }
