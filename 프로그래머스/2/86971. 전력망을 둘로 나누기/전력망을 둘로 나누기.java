@@ -1,72 +1,69 @@
 import java.util.*;
 
 class Solution {
-    static boolean[][] map;
-    static boolean[] visited;
-    static int N, sum1, sum2;
+    
+    static int[] parents;
+    static int N;
+    
+    private static void makeSet() {
+        parents = new int[N+1];
+        for (int i = 1; i <= N; i++) {
+            parents[i] = i;
+        }
+    }
+    
+    private static int findSet(int v) {
+        if (parents[v] == v) {
+            return v;
+        }
+        
+        return parents[v] = findSet(parents[v]);
+    }
+    
+    private static void union(int u, int v) {
+        int uRoot = findSet(u);
+        int vRoot = findSet(v);
+        
+        if (uRoot == vRoot) {
+            return;
+        }
+        
+        if (uRoot > vRoot) {
+            parents[uRoot] = vRoot;
+        } else {
+            parents[vRoot] = uRoot;
+        }
+    }
     
     public int solution(int n, int[][] wires) {
         int answer = Integer.MAX_VALUE;
-        
         N = n;
-        map = new boolean[N+1][N+1];
-        for (int i = 0; i < wires.length; i++) {
-            int from = wires[i][0];
-            int to = wires[i][1];
-            map[from][to] = true;
-            map[to][from] = true;
-        }
         
-        for (int k = 0; k < wires.length; k++) {
-            int from = wires[k][0];
-            int to = wires[k][1];
-            map[from][to] = false;
-            map[to][from] = false;
-            visited = new boolean[N+1];
-            sum1 = 0;
-            sum2 = 0;
-            boolean flag = false;
-            for (int i = 1; i <= N; i++) {
-                if (!visited[i]) {
-                    bfs(i, flag);
-                    flag = true;
+        for (int i = 0; i < wires.length; i++) {
+            makeSet();
+            for (int j = 0; j < wires.length; j++) {
+                if (i == j) continue;
+                union(wires[j][0], wires[j][1]);
+            }
+            for (int j = 0; j < wires.length; j++) {
+                if (i == j) continue;
+                union(wires[j][0], wires[j][1]);
+            }
+            // System.out.println(Arrays.toString(parents));
+            int[] cnt = new int[2];
+            int first = 0;
+            for (int j = 1; j < parents.length; j++) {
+                if (first == 0) {
+                    first = parents[j];
+                }
+                if (parents[j] == first) {
+                    cnt[0]++;
+                } else {
+                    cnt[1]++;
                 }
             }
-            
-            map[from][to] = true;
-            map[to][from] = true;
-            
-            answer = Math.min(answer, Math.abs(sum1 - sum2));
+            answer = Math.min(answer, Math.abs(cnt[0] - cnt[1]));
         }
         return answer;
     }
-    
-    private static void bfs(int start, boolean flag) {
-        Queue<Integer> queue = new ArrayDeque<>();
-        visited[start] = true;
-        queue.add(start);
-        
-        int sum = 0;
-        while (!queue.isEmpty()) {
-            int cur = queue.poll();
-            
-            for (int i = 1; i <= N; i++) {
-                if (!visited[i] && map[cur][i]) {
-                    visited[i] = true;
-                    sum++;
-                    queue.add(i);
-                }
-            }
-        }
-        if (flag) {
-            sum1 = sum;
-        } else {
-            sum2 = sum;
-        }
-    }
 }
-
-// for문 돌면서 wires 하나씩 자르기
-// 두 그룹 각각 노드 개수 구하기
-// 차이 구해서 최소값 갱신
-// 복구
