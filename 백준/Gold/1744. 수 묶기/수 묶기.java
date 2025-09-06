@@ -1,43 +1,58 @@
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int[] arr = new int[n];
-        long ans =0;
 
-        for (int i = 0; i <n ; i++) {
-            arr[i] = sc.nextInt();
-        }
+    static int N, sum;
+    static PriorityQueue<Integer> plus, minus;
 
-        Arrays.sort(arr);
-        int left = 0;
-        int right = n-1;
-        ans = 0;
-        // 0, 음수
-        for (; left < right ; left+=2) {
-            if(arr[left] <1 && arr[left+1] < 1){
-               ans += arr[left] * arr[left+1];
-            }else{
-                break;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        plus = new PriorityQueue<>(Comparator.reverseOrder());
+        minus = new PriorityQueue<>();
+
+        for (int i = 0; i < N; i++) {
+            int num = Integer.parseInt(br.readLine());
+            if (num > 0) {
+                plus.add(num);
+            } else {
+                minus.add(num);
             }
         }
 
-        // 양수
-        for (; right >0; right-=2) {
-            // 1과는 곱하지 않게 조건문 추가.
-            if(arr[right] >1 && arr[right-1] > 1){
-                ans += arr[right] * arr[right-1];
-            }else{
+        while (!minus.isEmpty()) {
+            int cur = minus.poll();
+            if (minus.isEmpty()) {
+                sum += cur;
                 break;
             }
+            if (minus.peek() == 0) {
+                minus.poll();
+            } else {
+                sum += (cur * minus.poll());
+            }
         }
-        //남은 값들은 더해주기
-        for (; right >= left; right--) {
-            ans += arr[right];
+
+        while (!plus.isEmpty()) {
+            int cur = plus.poll();
+            if (plus.isEmpty()) {
+                sum += cur;
+                break;
+            }
+            if (cur == 1) {
+                sum += 1;
+            } else if (plus.peek() == 1) {
+                sum += cur + plus.poll();
+            } else {
+                sum += (cur * plus.poll());
+            }
+
         }
-        System.out.println(ans);
+
+        System.out.println(sum);
     }
 }
